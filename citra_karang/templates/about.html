@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Tentang Riset | Marine Intelligence{% endblock %}
+
+{% block content %}
+<div class="pt-40 pb-20 max-w-4xl mx-auto px-6 space-y-12">
+    
+    <!-- Pengantar Riset -->
+    <div class="text-center max-w-2xl mx-auto space-y-3">
+        <span class="text-xs font-bold uppercase tracking-widest text-secondary bg-secondary/10 px-3 py-1 rounded-full border border-secondary/20">Latar Belakang Ilmiah</span>
+        <h1 class="text-4xl font-extrabold tracking-tight text-white">Metodologi & Parameter Sistem</h1>
+        <p class="text-sm text-slate-400">Bagaimana kecerdasan buatan membaca pola kerusakan terumbu karang melalui struktur tekstur permukaan koral.</p>
+    </div>
+
+    <!-- Kartu Penjelasan Teori -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="glass-card p-6 rounded-2xl space-y-3">
+            <div class="flex items-center gap-3 text-secondary">
+                <span class="material-symbols-outlined">texture</span>
+                <h3 class="font-bold text-lg text-white">Ekstraksi Ciri GLCM</h3>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                *Gray Level Co-occurrence Matrix* (GLCM) bekerja dengan menganalisis hubungan spasial antar piksel bertetangga berdasarkan jarak dan sudut orientasi tertentu. Dalam riset ini, kami menggunakan konfigurasi 4 sudut utama ($0^\circ, 45^\circ, 90^\circ, 135^\circ$) untuk mendapatkan akurasi tekstur omnidireksional yang kuat.
+            </p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl space-y-3">
+            <div class="flex items-center gap-3 text-cyan-400">
+                <span class="material-symbols-outlined">account_tree</span>
+                <h3 class="font-bold text-lg text-white">Klasifikasi Engine SVM</h3>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                *Support Vector Machine* (SVM) memetakan $16$ fitur tekstur yang didapatkan dari perhitungan matematika GLCM ke dalam ruang dimensi tinggi. Model kemudian mencari *hyperplane* pembatas paling optimal guna memisahkan kelas koral sehat dan rusak dengan margin maksimal.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tabel Parameter Tekstur -->
+    <div class="glass-card rounded-2xl p-6 overflow-hidden">
+        <h3 class="text-md font-bold text-white mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400">table_chart</span> 4 Parameter Tekstur Utama
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-white/5 text-slate-200 uppercase tracking-wider font-semibold border-b border-white/10">
+                    <tr>
+                        <th class="p-4">Parameter</th>
+                        <th class="p-4">Deskripsi Matematis</th>
+                        <th class="p-4">Karakteristik Pada Objek Koral</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    <tr>
+                        <td class="p-4 font-bold text-white">Contrast</td>
+                        <td class="p-4 text-slate-400">Mengukur tingkat intensitas kontras lokal antar piksel.</td>
+                        <td class="p-4 text-slate-400">Koral rusak akibat pemutihan (*bleaching*) cenderung memiliki variasi nilai kontras tajam.</td>
+                    </tr>
+                    <tr>
+                        <td class="p-4 font-bold text-white">Correlation</td>
+                        <td class="p-4 text-slate-400">Mengukur ketergantungan linier nilai derajat keabuan gambar.</td>
+                        <td class="p-4 text-slate-400">Menunjukkan perulangan pola linear dari koloni terumbu karang yang sehat.</td>
+                    </tr>
+                    <tr>
+                        <td class="p-4 font-bold text-white">Energy</td>
+                        <td class="p-4 text-slate-400">Menghitung jumlah kuadrat elemen dalam matriks GLCM.</td>
+                        <td class="p-4 text-slate-400">Nilai tinggi mencerminkan tekstur gambar koral yang sangat homogen dan teratur.</td>
+                    </tr>
+                    <tr>
+                        <td class="p-4 font-bold text-white">Homogeneity</td>
+                        <td class="p-4 text-slate-400">Mengukur kedekatan distribusi elemen dalam matriks GLCM.</td>
+                        <td class="p-4 text-slate-400">Mengindikasikan seberapa seragam tekstur koloni karang hidup dibanding struktur mati yang kasar.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

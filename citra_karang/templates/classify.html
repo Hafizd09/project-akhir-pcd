@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% block title %}Uji Klasifikasi | Marine Intelligence{% endblock %}
+
+{% block head %}
+<style>
+    .shimmer {
+        background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+        background-size: 200% 100%;
+        animation: loading-shimmer 1.5s infinite;
+    }
+    @keyframes loading-shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+</style>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="pt-40 pb-16 max-w-6xl mx-auto px-6">
+    <div class="max-w-2xl mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-secondary bg-secondary/10 px-3 py-1 rounded-full border border-secondary/20">SVM + GLCM 4-Directional Engine</span>
+        <h1 class="text-4xl font-extrabold tracking-tight text-white mt-3 mb-2">Identifikasi Kesehatan Terumbu Karang</h1>
+        <p class="text-sm text-slate-400 leading-relaxed">Ekstrak tekstur spasial mikro-arsitektur koral secara otomatis menggunakan matriks kookurensi tingkat keabuan derajat penuh.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- PANEL KIRI: UPLOAD ZONE -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-6 shadow-2xl flex flex-col justify-between min-h-[460px]">
+            <div>
+                <h2 class="text-md font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary">upload_file</span> Input Data Citra
+                </h2>
+                
+                <div id="dropZone" class="border-2 border-dashed border-white/10 hover:border-secondary/50 rounded-xl p-8 text-center cursor-pointer bg-black/10 hover:bg-secondary/5 transition-all duration-300 group">
+                    <input type="file" id="imageInput" accept="image/*" class="hidden">
+                    <span class="material-symbols-outlined text-4xl text-slate-500 group-hover:text-secondary group-hover:scale-110 transition-transform mb-3">scuba_diving</span>
+                    <p class="text-sm font-semibold text-slate-200">Tarik gambar ke sini atau klik untuk memilih</p>
+                    <p class="text-xs text-slate-500 mt-1">Mendukung file ekstensi .jpg, .jpeg, .png</p>
+                </div>
+
+                <div id="previewContainer" class="mt-6 hidden">
+                    <p class="text-xs font-bold text-slate-400 tracking-wider uppercase mb-2">Preview Objek Analisis:</p>
+                    <div class="relative rounded-lg overflow-hidden border border-white/10 bg-slate-900 shadow-inner">
+                        <img id="previewImage" class="w-full max-h-52 object-cover" alt="Preview">
+                    </div>
+                </div>
+            </div>
+
+            <button id="btnProses" class="w-full mt-6 bg-gradient-to-r from-secondary to-orange-600 hover:from-orange-600 hover:to-secondary text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-secondary/10 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                Jalankan Pemindaian Tekstur
+            </button>
+        </div>
+
+        <!-- PANEL KANAN: DASBOR HASIL -->
+        <div class="lg:col-span-7 glass-card rounded-2xl p-6 shadow-2xl min-h-[460px] flex flex-col justify-between">
+            <div>
+                <h2 class="text-md font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-cyan-400">query_stats</span> Dasbor Analisis Vektor Ciri
+                </h2>
+
+                <div id="placeholderBox" class="flex flex-col items-center justify-center h-80 border border-dashed border-white/5 rounded-xl text-center p-6 bg-black/5">
+                    <span class="material-symbols-outlined text-5xl text-slate-600 mb-2 animate-pulse">waves</span>
+                    <p class="text-sm text-slate-400 max-w-xs">Menunggu berkas diunggah untuk menghitung parameter energi, homogenitas, korelasi, dan kontras spasial.</p>
+                </div>
+
+                <div id="skeletonLoader" class="hidden space-y-6 py-4 animate-pulse">
+                    <div class="h-24 bg-white/5 rounded-xl shimmer"></div>
+                    <div class="h-48 bg-white/5 rounded-xl shimmer"></div>
+                </div>
+
+                <div id="resultBox" class="hidden space-y-6">
+                    <div id="statusAlertBg" class="p-5 rounded-xl border text-center transition-all duration-500">
+                        <p class="text-xs uppercase font-extrabold tracking-widest text-slate-400 mb-1">Hasil Diagnosis Lapisan Kernel SVM</p>
+                        <h3 id="svmPrediction" class="text-2xl font-black">MEMPROSES...</h3>
+                        
+                        <div class="mt-4 max-w-xs mx-auto">
+                            <div class="flex justify-between text-xs font-medium mb-1">
+                                <span class="text-slate-400">Skor Keyakinan Komputasi</span>
+                                <span id="confidenceText" class="font-bold text-white">0%</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+                                <div id="confidenceBar" class="bg-gradient-to-r from-cyan-400 to-blue-500 h-1.5 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col items-center">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Sidik Jari Spektrograf Tekstur (GLCM Mean)</p>
+                        <div class="w-full max-h-60 flex justify-center items-center">
+                            <canvas id="glcmRadarChart" class="max-w-[260px] max-h-[260px]"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-slate-500 border-t border-white/5 pt-3 mt-4 flex justify-between">
+                <span>Engine Status: Operational</span>
+                <span>Format Masukan: GLCM Vektor $\in \mathbb{R}^{16}$</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const imageInput = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const btnProses = document.getElementById('btnProses');
+    const placeholderBox = document.getElementById('placeholderBox');
+    const skeletonLoader = document.getElementById('skeletonLoader');
+    const resultBox = document.getElementById('resultBox');
+    
+    let selectedFile = null;
+    let radarChartInstance = null;
+
+    function updateRadarChart(contrast, correlation, energy, homogeneity) {
+        const ctx = document.getElementById('glcmRadarChart').getContext('2d');
+        if (radarChartInstance) radarChartInstance.destroy();
+
+        radarChartInstance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Kontras', 'Korelasi', 'Energi', 'Homogenitas'],
+                datasets: [{
+                    label: 'Nilai Ekstraksi Karakteristik',
+                    data: [contrast, correlation, energy, homogeneity],
+                    backgroundColor: 'rgba(234, 114, 59, 0.25)',
+                    borderColor: '#EA723B',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#0D3C49',
+                    pointBorderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        pointLabels: { color: '#94a3b8', font: { size: 10, weight: 'bold' } },
+                        ticks: { display: false },
+                        suggestedMin: 0,
+                        suggestedMax: 1
+                    }
+                }
+            }
+        });
+    }
+
+    dropZone.addEventListener('click', () => imageInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-secondary'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-secondary'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-secondary');
+        if (e.dataTransfer.files.length) handleFileSelection(e.dataTransfer.files[0]);
+    });
+
+    imageInput.addEventListener('change', function() {
+        if (this.files.length) handleFileSelection(this.files[0]);
+    });
+
+    function handleFileSelection(file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.classList.remove('hidden');
+            btnProses.removeAttribute('disabled');
+            resultBox.classList.add('hidden');
+            skeletonLoader.classList.add('hidden');
+            placeholderBox.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+
+    btnProses.addEventListener('click', async function() {
+        if (!selectedFile) return;
+
+        placeholderBox.classList.add('hidden');
+        resultBox.classList.add('hidden');
+        skeletonLoader.classList.remove('hidden');
+        btnProses.disabled = true;
+        btnProses.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Memindai Spasial...`;
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        try {
+            const response = await fetch('/predict', { method: 'POST', body: formData });
+            const data = await response.json();
+
+            if (response.ok) {
+                skeletonLoader.classList.add('hidden');
+                resultBox.classList.remove('hidden');
+
+                const predEl = document.getElementById('svmPrediction');
+                const bgEl = document.getElementById('statusAlertBg');
+                predEl.innerText = data.prediction;
+
+                if (data.prediction.includes("SEHAT")) {
+                    predEl.className = "text-2xl font-black text-emerald-400 tracking-wide drop-shadow";
+                    bgEl.className = "p-5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 shadow-inner";
+                } else {
+                    predEl.className = "text-2xl font-black text-rose-400 tracking-wide drop-shadow";
+                    bgEl.className = "p-5 rounded-xl border border-rose-500/30 bg-rose-500/5 shadow-inner";
+                }
+
+                updateRadarChart(data.contrast, data.correlation, data.energy, data.homogeneity);
+                document.getElementById('confidenceText').innerText = data.confidence + '%';
+                setTimeout(() => {
+                    document.getElementById('confidenceBar').style.width = data.confidence + '%';
+                }, 200);
+            } else {
+                alert("Error: " + data.error);
+                resetDashboard();
+            }
+        } catch (err) {
+            alert("Gagal menghubungi server Flask.");
+            resetDashboard();
+        } finally {
+            btnProses.disabled = false;
+            btnProses.innerHTML = `Jalankan Pemindaian Tekstur`;
+        }
+    });
+
+    function resetDashboard() {
+        skeletonLoader.classList.add('hidden');
+        resultBox.classList.add('hidden');
+        placeholderBox.classList.remove('hidden');
+    }
+</script>
+{% endblock %}

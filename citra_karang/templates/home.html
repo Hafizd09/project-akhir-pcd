@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Beranda | Marine Intelligenc{% endblock %}
+
+{% block content %}
+<div class="pt-40 pb-20 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    
+    <!-- Hero Kiri -->
+    <div class="space-y-6">
+        <span class="text-xs font-bold uppercase tracking-widest text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full border border-cyan-400/20">Klasifikasi Terumbu Karang</span>
+        <h1 class="text-5xl font-black tracking-tight leading-tight text-white">
+            Melindungi Laut dengan <br><span class="bg-gradient-to-r from-secondary to-orange-400 bg-clip-text text-transparent">Kecerdasan Buatan</span>
+        </h1>
+        <p class="text-slate-400 text-base leading-relaxed">
+            mengklasifikasi terumbu karang secara instan melalui foto bawah air untuk mengetahui mana terumbu karang yang sehat dan yang rusak.
+        </p>
+        <div class="pt-4 flex gap-4">
+            <a href="/classify" class="bg-gradient-to-r from-secondary to-orange-600 hover:from-orange-600 hover:to-secondary text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-secondary/10 transition-all duration-300 flex items-center gap-2 group">
+                Mulai Klasifikasi <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </a>
+            <a href="/about" class="glass-card hover:bg-white/5 text-slate-300 font-semibold py-3.5 px-6 rounded-xl transition-all">
+                Pelajari Metodologi
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistik Kanan -->
+    <div class="grid grid-cols-2 gap-6">
+        <div class="glass-card p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+            <div class="absolute -right-4 -bottom-4 text-white/5 transform rotate-12 scale-150">
+                <span class="material-symbols-outlined text-7xl">biotech</span>
+            </div>
+            <span class="material-symbols-outlined text-secondary text-3xl mb-3">grid_on</span>
+            <h3 class="text-2xl font-bold text-white mb-1">Fitur</h3>
+            <p class="text-xs text-slate-400">Dimensi spasial tekstur diekstrak lewat 4 sudut orientasi derajat penuh.</p>
+        </div>
+        
+        <div class="glass-card p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+            <div class="absolute -right-4 -bottom-4 text-white/5 transform rotate-12 scale-150">
+                <span class="material-symbols-outlined text-7xl">bolt</span>
+            </div>
+            <span class="material-symbols-outlined text-cyan-400 text-3xl mb-3">speed</span>
+            <h3 class="text-2xl font-bold text-white mb-1">&lt; 1 Detik</h3>
+            <p class="text-xs text-slate-400">Komputasi matriks kookurensi dan inferensi model linear kernel SVM.</p>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl border border-white/5 col-span-2 relative overflow-hidden group hover:scale-[1.01] transition-all duration-300">
+            <span class="material-symbols-outlined text-emerald-400 text-3xl mb-2">waves</span>
+            <h3 class="text-lg font-bold text-white mb-1">Misi Konservasi Berkelanjutan</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Membantu peneliti maritim, mahasiswa, dan aktivis lingkungan melakukan monitoring ekosistem terumbu karang nusantara tanpa membutuhkan penganalisisan manual laboratorium yang memakan waktu lama.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
