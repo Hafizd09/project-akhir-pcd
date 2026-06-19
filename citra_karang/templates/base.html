@@ -4,16 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Marine Intelligence{% endblock %}</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    },
                     colors: {
                         primary: '#0A3641',
                         secondary: '#EA723B',
@@ -23,47 +28,89 @@
             }
         }
     </script>
+
     <style>
-        body { background: linear-gradient(135deg, #041317 0%, #08242C 50%, #0D3C49 100%); }
         .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
     </style>
+
     {% block head %}{% endblock %}
 </head>
-<body class="text-slate-100 min-h-screen font-sans antialiased flex flex-col justify-between">
 
-    <!-- NAVBAR GLOBAL -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/5 px-8 py-4 flex items-center justify-between">
+<body
+    class="text-slate-100 min-h-screen font-sans antialiased flex flex-col justify-between relative"
+    style="
+        background-image:url('{{ url_for('static', filename='images/hero.jpg') }}');
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    "
+>
+
+    <!-- Overlay Global -->
+    <div class="fixed inset-0 bg-black/75 backdrop-blur-sm -z-10"></div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10 px-8 py-4 flex items-center justify-between">
+
         <a href="/" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-orange-600 flex items-center justify-center shadow-lg shadow-secondary/20 group-hover:scale-105 transition-transform">
-                <span class="material-symbols-outlined text-white font-bold">insights</span>
-            </div>
+
+            <!-- Ganti logo di sini -->
+            <img
+                src="{{ url_for('static', filename='images/logo3.jpg') }}"
+                alt="Marine Intelligence"
+                class="w-12 h-12 object-contain group-hover:scale-105 transition-transform"
+            >
+
             <div>
-                <span class="text-lg font-extrabold tracking-wider bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">MARINE</span>
-                <span class="text-xs block text-secondary font-semibold tracking-widest -mt-1">INTELLIGENCE</span>
+                <span class="text-lg font-extrabold tracking-wider text-white">
+                    FINDING
+                </span>
+                <span class="text-sm block text-secondary font-bold tracking-[0.3em] -mt-1">
+                    NEMO
+                </span>
             </div>
+
         </a>
+
         <div class="flex items-center gap-6 text-sm font-medium">
-            <a href="/" class="hover:text-secondary transition-colors {% if request.path == '/' %}text-white border-b-2 border-secondary pb-1{% else %}text-slate-400{% endif %}">Beranda</a>
-            <a href="/classify" class="hover:text-secondary transition-colors {% if request.path == '/classify' %}text-white border-b-2 border-secondary pb-1{% else %}text-slate-400{% endif %}">Klasifikasi Citra</a>
-            <a href="/about" class="hover:text-secondary transition-colors {% if request.path == '/about' %}text-white border-b-2 border-secondary pb-1{% else %}text-slate-400{% endif %}">Tentang Riset</a>
+            <a href="/"
+                class="hover:text-secondary transition-colors {% if request.path == '/' %}text-white border-b-2 border-secondary pb-1{% else %}text-slate-300{% endif %}">
+                Beranda
+            </a>
+
+            <a href="/classify"
+                class="hover:text-secondary transition-colors {% if request.path == '/classify' %}text-white border-b-2 border-secondary pb-1{% else %}text-slate-300{% endif %}">
+                Klasifikasi Citra
+            </a>
+
+            <a href="/about"
+                class="hover:text-secondary transition-colors {% if request.path == '/about' %}text-white border-b-2 border-secondary pb-1{% else %}text-slate-300{% endif %}">
+                About
+            </a>
         </div>
+
     </nav>
 
-    <!-- CONTENT PLACEHOLDER -->
-    <main class="flex-grow">
+    <!-- CONTENT -->
+    <main class="flex-grow relative z-10">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- FOOTER GLOBAL -->
-    <footer class="border-t border-white/5 bg-black/20 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Marine Intelligence Project. Dikembangkan untuk Konservasi Terumbu Karang Berbasis AI.</p>
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 bg-black/40 backdrop-blur-md py-6 text-center text-sm text-slate-300">
+        <p>
+            © 2026 Finding Nemo Project.
+            Dikembangkan untuk Konservasi Terumbu Karang Berbasis AI dan Tugas .
+        </p>
     </footer>
 
     {% block scripts %}{% endblock %}
+
 </body>
 </html>

@@ -196,6 +196,9 @@
         try {
             const response = await fetch('/predict', { method: 'POST', body: formData });
             const data = await response.json();
+            console.log("Response Flask:", data);
+            
+            
 
             if (response.ok) {
                 skeletonLoader.classList.add('hidden');
@@ -213,6 +216,7 @@
                     bgEl.className = "p-5 rounded-xl border border-rose-500/30 bg-rose-500/5 shadow-inner";
                 }
 
+                console.log("Response Flask:", data);
                 updateRadarChart(data.contrast, data.correlation, data.energy, data.homogeneity);
                 document.getElementById('confidenceText').innerText = data.confidence + '%';
                 setTimeout(() => {
